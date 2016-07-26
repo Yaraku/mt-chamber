@@ -1,0 +1,53 @@
+#
+# Travatar Web Server
+#
+
+
+ListeningSocket:host="127.0.0.1":port=8501:backlog=10 > conn
+
+#Echo:text="welcome" < conn > welcome
+#SocketSendData:encode="utf-8" < conn welcome > conn
+
+SocketReceiveData:size=65536:decode="utf-8" < conn > conn ja
+
+# Japanese POS tagging
+Alias KyTeaPart System:command="kytea -notag 2 -wsconst D -in part":showerr=True
+
+# Syntactic Parsers
+Alias ParseJapanese System:command="java -cp /SOMEWHERE/stanfordnlp-srparser-ja/build/libs/yaraku-nlp-0.1.jar:/SOMEWHERE/stanfordnlp-srparser-ja/lib/* com.yaraku.nlp.parser.shiftreduce.demo.JapaneseShiftReduceParserDemo -model /SOMEWHERE/stanfordnlp-srparser-ja/ja.beam.rightmost.model.ser.gz":showerr=True
+
+Alias Travatar Travatar_F2S:bin="/usr/local/bin/travatar":config="/SOMEWHERE/travatar_models/travatar.ini":showerr=True
+
+TermPreprocessor < ja > ja_mod terms
+
+# Query pre-processing part
+KyTeaPart < ja_mod > ja_tok
+
+RemoveSpaceTokenOfKyTea < ja_tok > ja_tok_clean
+
+ConvertBracketsAfterKytea < ja_tok_clean > ja_tok_bracket_clean
+
+ParseJapanese * 2 < ja_tok_bracket_clean > ja_parse
+
+LowerCaser < ja_parse > ja_parse_low
+
+# Decoding process part
+Travatar < ja_parse_low > travatar_trace translation
+
+TermPostprocessor < translation terms > result
+
+ConvertBracketsAfterTravatar < result > result
+
+SocketSendData:encode="utf-8" < conn result > conn
+
+Watch:name="terms" < terms
+Watch:name="ja_mod" < ja_mod
+Watch:name="ja_tok" < ja_tok
+Watch:name="ja_tok_bracket_clean" < ja_tok_bracket_clean
+Watch:name="ja_parse_low" < ja_parse_low
+Watch:name="translation" < translation
+Watch:name="travatar_trace" < travatar_trace
+Watch:name="result" < result
+
+CloseSocketConnection < conn
+
