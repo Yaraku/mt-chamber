@@ -38,6 +38,8 @@ TermPostprocessor < translation terms > result
 
 ConvertBracketsAfterTravatar < result > result
 
+StylePostprocessor < result > result
+
 SocketSendData:encode="utf-8" < conn result > conn
 
 Watch:name="terms" < terms
