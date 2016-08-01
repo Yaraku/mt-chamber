@@ -3,7 +3,7 @@
 #
 
 
-ListeningSocket:host="127.0.0.1":port=8501:backlog=10 > conn
+ListeningSocket:host="0.0.0.0":port=8501:backlog=10 > conn
 
 #Echo:text="welcome" < conn > welcome
 #SocketSendData:encode="utf-8" < conn welcome > conn
@@ -16,7 +16,7 @@ Alias KyTeaPart System:command="kytea -notag 2 -wsconst D -in part":showerr=True
 # Syntactic Parsers
 Alias ParseJapanese System:command="java -cp /SOMEWHERE/stanfordnlp-srparser-ja/build/libs/yaraku-nlp-0.1.jar:/SOMEWHERE/stanfordnlp-srparser-ja/lib/* com.yaraku.nlp.parser.shiftreduce.demo.JapaneseShiftReduceParserDemo -model /SOMEWHERE/stanfordnlp-srparser-ja/ja.beam.rightmost.model.ser.gz":showerr=True
 
-Alias Travatar Travatar_F2S:bin="/usr/local/bin/travatar":config="/SOMEWHERE/travatar_models/travatar.ini":showerr=True
+Alias Travatar Travatar_JaEn:travatar_path="/usr/local/bin/travatar":config_path="/SOMEWHERE/travatar_models/travatar.ini":showerr=True
 
 TermPreprocessor < ja > ja_mod terms
 

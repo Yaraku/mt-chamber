@@ -9,13 +9,16 @@ class Command:
     MultiThreadable = True
     ShareResources = False
 
-    def __init__(self):
-        TRAVATAR_BIN = "/usr/local/bin/travatar"
-        TRAVATAR_CONFIG = "/vol/travatar_models/eijiro-added/travatar.ini"
+    def __init__(self, travatar_path=None, config_path=None, showerr=False):
+        if not travatar_path:
+            travatar_path = "/usr/local/bin/travatar"
+        if not config_path:
+            config_path = "/vol/travatar_models/eijiro-added/travatar.ini"
         self.travatar = subprocess.Popen(
-            [TRAVATAR_BIN, "-config_file", TRAVATAR_CONFIG, "-trace_out", "/dev/stdout", "-in_format", "penn",
-             "-buffer", "false"],
-            stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
+            [travatar_path, "-config_file", config_path, "-trace_out", "STDOUT",
+             "-in_format", "penn", "-buffer", "false"],
+            stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=None if showerr else subprocess.PIPE,
+            universal_newlines=True)
         self.span_reg = re.compile(r"\[([0-9]+), ([0-9]+)\]")
 
     def routine(self, instream):
