@@ -42,7 +42,7 @@ class Command:
             right = sentence[offset:]
             right = ' '.join([kytea_escape(x) for x in list(right)])
             chunks.append(right)
-        annotated_sentence = '|'.join(chunks).strip('|- \n') + '\n'
+        annotated_sentence = '|'.join(chunks).strip() + '\n'
 
         return (annotated_sentence, matched_terms)
 
